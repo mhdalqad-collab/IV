@@ -1,0 +1,512 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Berlin: 412 storage spaces found · Selk.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<!-- Header (compact) -->
+<header class="topbar">
+  <div class="wrap">
+    <div class="topbar-row">
+      <a href="index.html" class="brand">Selk.com <sup>B2B</sup></a>
+      <div class="topbar-right">
+        <a href="#">EUR</a>
+        <a href="#" class="icon-btn" aria-label="Language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </a>
+        <a href="#" class="icon-btn" aria-label="Help">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        </a>
+        <a href="dashboard.html">List your space</a>
+        <a href="#" class="btn-outline-w">Register</a>
+        <a href="#" class="btn-outline-w">Sign in</a>
+      </div>
+    </div>
+  </div>
+  <div class="cat-nav">
+    <div class="wrap">
+      <nav class="cat-tabs">
+        <a href="search.html" class="cat-tab active">
+          <svg viewBox="0 0 24 24"><path d="M3 10v10h18V10"/><path d="m2 10 10-7 10 7"/></svg> Warehouses
+        </a>
+        <a href="search.html" class="cat-tab">
+          <svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="10" rx="1"/></svg> Containers
+        </a>
+        <a href="search.html" class="cat-tab">
+          <svg viewBox="0 0 24 24"><path d="M12 2v6"/><path d="M4 12a8 8 0 0 1 16 0v8H4z"/></svg> Climate
+        </a>
+        <a href="search.html" class="cat-tab">
+          <svg viewBox="0 0 24 24"><path d="M3 21V7l9-4 9 4v14"/></svg> Basements
+        </a>
+        <a href="search.html" class="cat-tab">
+          <svg viewBox="0 0 24 24"><rect x="2" y="9" width="20" height="10" rx="1"/></svg> Garages
+        </a>
+      </nav>
+    </div>
+  </div>
+</header>
+
+<!-- Search strip -->
+<div style="background: var(--bk-blue); padding-bottom: 24px;">
+  <div class="wrap">
+    <form class="search-strip" onsubmit="event.preventDefault()">
+      <div class="field">
+        <svg viewBox="0 0 24 24"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+        <input value="Berlin, Germany">
+      </div>
+      <div class="field">
+        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+        <input value="14 Oct 2026 — 3 Nov 2026">
+      </div>
+      <div class="field">
+        <svg viewBox="0 0 24 24"><path d="M4 21V8l8-5 8 5v13"/></svg>
+        <select>
+          <option>Any type · 120 m²</option>
+          <option>Warehouse · 120 m²</option>
+        </select>
+      </div>
+      <button type="submit" class="btn-search">Search</button>
+    </form>
+  </div>
+</div>
+
+<main class="search-page">
+  <div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumbs">
+      <a href="index.html">Selk</a> <span class="sep">›</span>
+      <a href="#">Germany</a> <span class="sep">›</span>
+      <span style="color: var(--heading);">Berlin</span>
+    </nav>
+
+    <div class="search-layout">
+
+      <!-- =========================================================
+           FILTER SIDEBAR
+           ========================================================= -->
+      <aside class="filters">
+        <div class="fh">
+          <h4>Filter by</h4>
+          <p class="total">412 properties found</p>
+        </div>
+
+        <div class="filter-group">
+          <h5>Your budget (per m²/mo)</h5>
+          <div class="range-wrap">
+            <div class="range-val">
+              <span>€ <span>18</span></span>
+              <span>€ <span id="pmax">200</span></span>
+            </div>
+            <input type="range" min="10" max="200" value="200" data-show="#pmax">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h5>Floor area (m²)</h5>
+          <div class="range-wrap">
+            <div class="range-val">
+              <span><span>10</span> m²</span>
+              <span><span id="amax">2500</span> m²</span>
+            </div>
+            <input type="range" min="10" max="5000" value="2500" data-show="#amax">
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h5>Popular filters</h5>
+          <label class="filter-opt"><input type="checkbox" checked><span>Free cancellation</span><span class="count">214</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Insurance included</span><span class="count">98</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>24/7 access</span><span class="count">186</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Loading dock</span><span class="count">132</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Selk Pro verified</span><span class="count">89</span></label>
+        </div>
+
+        <div class="filter-group">
+          <h5>Storage type</h5>
+          <label class="filter-opt"><input type="checkbox" checked><span>Warehouse</span><span class="count">184</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Container</span><span class="count">62</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Climate-controlled</span><span class="count">39</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Basement / cellar</span><span class="count">74</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Garage</span><span class="count">21</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Outdoor / yard</span><span class="count">18</span></label>
+        </div>
+
+        <div class="filter-group">
+          <h5>Owner review score</h5>
+          <div class="star-row">
+            <button class="star-btn on">Any</button>
+            <button class="star-btn">Good 7+</button>
+            <button class="star-btn">Very good 8+</button>
+            <button class="star-btn">Excellent 9+</button>
+          </div>
+        </div>
+
+        <div class="filter-group">
+          <h5>Facilities</h5>
+          <label class="filter-opt"><input type="checkbox"><span>Forklift on-site</span><span class="count">96</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Pallet jack</span><span class="count">142</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>CCTV</span><span class="count">312</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>On-site staff</span><span class="count">104</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Dock leveller</span><span class="count">58</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>3-phase power</span><span class="count">71</span></label>
+          <a href="#" style="font-size: 13px; margin-top: 6px; display: inline-block;">Show more →</a>
+        </div>
+
+        <div class="filter-group">
+          <h5>Distance from centre</h5>
+          <label class="filter-opt"><input type="checkbox"><span>Less than 1 km</span><span class="count">42</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Less than 3 km</span><span class="count">128</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Less than 5 km</span><span class="count">241</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Less than 10 km</span><span class="count">358</span></label>
+        </div>
+
+        <div class="filter-group">
+          <h5>Neighbourhood</h5>
+          <label class="filter-opt"><input type="checkbox" checked><span>Mitte</span><span class="count">68</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Friedrichshain</span><span class="count">54</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Kreuzberg</span><span class="count">47</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Neukölln</span><span class="count">39</span></label>
+          <label class="filter-opt"><input type="checkbox"><span>Tempelhof</span><span class="count">62</span></label>
+        </div>
+
+      </aside>
+
+      <!-- =========================================================
+           RESULTS COLUMN
+           ========================================================= -->
+      <section>
+
+        <div class="results-head">
+          <div>
+            <h1>Berlin: 412 properties found</h1>
+            <p>14 Oct — 3 Nov · 120 m² required · Prices include all taxes & fees</p>
+          </div>
+          <div class="sort-select">
+            <span>Sort by:</span>
+            <select>
+              <option>Our top picks</option>
+              <option>Price (lowest first)</option>
+              <option>Price (highest first)</option>
+              <option>Review score</option>
+              <option>Distance from centre</option>
+              <option>Demand multiplier (low first)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="sort-bar">
+          <div class="icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+          </div>
+          <div>
+            <h4>Live market — ×1.38 average multiplier in Berlin</h4>
+            <p>Demand is elevated this week. 98 bookings in the last 24 hours. Prices refresh every 15 minutes.</p>
+          </div>
+        </div>
+
+        <div class="listings-col">
+
+          <!-- Card 1 -->
+          <a href="listing.html" class="listing-card reveal">
+            <div class="lc-media">
+              <img src="https://images.unsplash.com/photo-1565891741441-64926e441838?w=900&q=80" alt="">
+              <button class="heart" aria-label="Save">
+                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg>
+              </button>
+            </div>
+            <div class="lc-info">
+              <div class="title-row">
+                <div class="title">The Wedding Hangar · Warehouse</div>
+              </div>
+              <div class="meta">
+                <a>Mitte district</a><span>·</span><span class="distance">0.4 km from centre</span><span>·</span><a>Show on map</a>
+              </div>
+              <div class="tag-row">
+                <span class="badge badge-genius">Selk Pro</span>
+                <span class="badge-free"><svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Free cancellation</span>
+                <span class="badge-free"><svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Insurance included</span>
+              </div>
+              <p class="blurb">Former film studio turned 240 m² high-ceiling warehouse in central Mitte. Loading dock, forklift, 24/7 access. Perfect for production archives.</p>
+              <div class="signals">
+                <span class="pill">240 m²</span>
+                <span class="pill">5.2 m height</span>
+                <span class="pill">Forklift</span>
+                <span class="pill">24/7 access</span>
+                <span class="badge-demand hi"><span class="dot"></span>Only 2 bays left!</span>
+              </div>
+            </div>
+            <div class="lc-price">
+              <div class="score-row">
+                <div class="score-text">
+                  <span class="label">Excellent</span>
+                  <span class="count">142 reviews</span>
+                </div>
+                <span class="score-badge">9.2</span>
+              </div>
+              <span class="price-note">21 nights · 120 m²</span>
+              <span class="price-old">€6,720</span>
+              <span class="price">€5,715<small>EUR</small></span>
+              <span class="taxes">Includes taxes & fees</span>
+              <button class="cta-btn">See availability →</button>
+            </div>
+          </a>
+
+          <!-- Card 2 -->
+          <a href="listing.html" class="listing-card reveal">
+            <div class="lc-media">
+              <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=900&q=80" alt="">
+              <button class="heart" aria-label="Save">
+                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg>
+              </button>
+            </div>
+            <div class="lc-info">
+              <div class="title-row">
+                <div class="title">Tempelhof Reserve Bay</div>
+              </div>
+              <div class="meta">
+                <a>Tempelhof</a><span>·</span><span class="distance">5.8 km from centre</span><span>·</span><a>Show on map</a>
+              </div>
+              <div class="tag-row">
+                <span class="badge badge-discount">−12%</span>
+                <span class="badge-free"><svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Free cancellation</span>
+              </div>
+              <p class="blurb">Massive 1,200 m² bay inside a former aviation hangar. Drive-in access, tall ceilings, suitable for palletised goods and oversized cargo.</p>
+              <div class="signals">
+                <span class="pill">1,200 m²</span>
+                <span class="pill">8 m height</span>
+                <span class="pill">Drive-in</span>
+                <span class="pill">CCTV</span>
+                <span class="badge-demand med"><span class="dot"></span>Steady demand</span>
+              </div>
+            </div>
+            <div class="lc-price">
+              <div class="score-row">
+                <div class="score-text">
+                  <span class="label">Very good</span>
+                  <span class="count">86 reviews</span>
+                </div>
+                <span class="score-badge">8.7</span>
+              </div>
+              <span class="price-note">21 nights · 500 m²</span>
+              <span class="price-old">€6,100</span>
+              <span class="price">€5,368<small>EUR</small></span>
+              <span class="taxes">Includes taxes & fees</span>
+              <button class="cta-btn">See availability →</button>
+            </div>
+          </a>
+
+          <!-- Card 3 -->
+          <a href="listing.html" class="listing-card reveal">
+            <div class="lc-media">
+              <img src="https://images.unsplash.com/photo-1601598851547-4302969d0614?w=900&q=80" alt="">
+              <button class="heart" aria-label="Save">
+                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg>
+              </button>
+            </div>
+            <div class="lc-info">
+              <div class="title-row">
+                <div class="title">Kreuzberg Climate Vault</div>
+              </div>
+              <div class="meta">
+                <a>Kreuzberg</a><span>·</span><span class="distance">2.1 km from centre</span><span>·</span><a>Show on map</a>
+              </div>
+              <div class="tag-row">
+                <span class="badge badge-genius">Selk Pro</span>
+                <span class="badge-free"><svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Insurance included</span>
+              </div>
+              <p class="blurb">Climate-stabilised vault (18°C ± 1, 45% RH) for archival, fine art, and sensitive electronics. Monitored 24/7 with full humidity control.</p>
+              <div class="signals">
+                <span class="pill">410 m²</span>
+                <span class="pill">18°C climate</span>
+                <span class="pill">Humidity-controlled</span>
+                <span class="pill">Up to €1M cover</span>
+                <span class="urgency">⚡ 5 teams looking now</span>
+              </div>
+            </div>
+            <div class="lc-price">
+              <div class="score-row">
+                <div class="score-text">
+                  <span class="label">Exceptional</span>
+                  <span class="count">57 reviews</span>
+                </div>
+                <span class="score-badge">9.6</span>
+              </div>
+              <span class="price-note">21 nights · 100 m²</span>
+              <span class="price">€6,240<small>EUR</small></span>
+              <span class="taxes">Includes taxes & fees</span>
+              <button class="cta-btn">See availability →</button>
+            </div>
+          </a>
+
+          <!-- Card 4 -->
+          <a href="listing.html" class="listing-card reveal">
+            <div class="lc-media">
+              <img src="https://images.unsplash.com/photo-1595079676339-1534801ad6cf?w=900&q=80" alt="">
+              <button class="heart" aria-label="Save">
+                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg>
+              </button>
+            </div>
+            <div class="lc-info">
+              <div class="title-row">
+                <div class="title">Moabit Dock 7 · Industrial</div>
+              </div>
+              <div class="meta">
+                <a>Moabit</a><span>·</span><span class="distance">3.4 km from centre</span><span>·</span><a>Show on map</a>
+              </div>
+              <div class="tag-row">
+                <span class="badge-free"><svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Free cancellation</span>
+              </div>
+              <p class="blurb">Canal-side 3,200 m² bay with rolling dock access. Two cranes, two pallet jacks, overhead loading. Popular with construction and events teams.</p>
+              <div class="signals">
+                <span class="pill">3,200 m²</span>
+                <span class="pill">Canal access</span>
+                <span class="pill">2 cranes</span>
+                <span class="badge-demand hi"><span class="dot"></span>High demand</span>
+              </div>
+            </div>
+            <div class="lc-price">
+              <div class="score-row">
+                <div class="score-text">
+                  <span class="label">Very good</span>
+                  <span class="count">104 reviews</span>
+                </div>
+                <span class="score-badge">8.5</span>
+              </div>
+              <span class="price-note">21 nights · 800 m²</span>
+              <span class="price">€12,480<small>EUR</small></span>
+              <span class="taxes">Includes taxes & fees</span>
+              <button class="cta-btn">See availability →</button>
+            </div>
+          </a>
+
+          <!-- Card 5 -->
+          <a href="listing.html" class="listing-card reveal">
+            <div class="lc-media">
+              <img src="https://images.unsplash.com/photo-1601599561213-832382fd07ba?w=900&q=80" alt="">
+              <button class="heart" aria-label="Save">
+                <svg viewBox="0 0 24 24"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.8 1-1a5.5 5.5 0 0 0 0-7.6z"/></svg>
+              </button>
+            </div>
+            <div class="lc-info">
+              <div class="title-row">
+                <div class="title">Neukölln Cellar Block</div>
+              </div>
+              <div class="meta">
+                <a>Neukölln</a><span>·</span><span class="distance">4.2 km from centre</span><span>·</span><a>Show on map</a>
+              </div>
+              <div class="tag-row">
+                <span class="badge badge-discount">−18%</span>
+                <span class="badge-free"><svg viewBox="0 0 24 24"><path d="m5 12 5 5L20 7"/></svg>Free cancellation</span>
+              </div>
+              <p class="blurb">Dry, ventilated 120 m² cellar beneath a former bakery. Narrow stair access — ideal for document archives, small pallets, and light goods.</p>
+              <div class="signals">
+                <span class="pill">120 m²</span>
+                <span class="pill">Cellar</span>
+                <span class="pill">Dry</span>
+                <span class="badge-demand lo"><span class="dot"></span>Openings available</span>
+              </div>
+            </div>
+            <div class="lc-price">
+              <div class="score-row">
+                <div class="score-text">
+                  <span class="label">Good</span>
+                  <span class="count">42 reviews</span>
+                </div>
+                <span class="score-badge">7.8</span>
+              </div>
+              <span class="price-note">21 nights · 60 m²</span>
+              <span class="price-old">€2,280</span>
+              <span class="price">€1,870<small>EUR</small></span>
+              <span class="taxes">Includes taxes & fees</span>
+              <button class="cta-btn">See availability →</button>
+            </div>
+          </a>
+
+        </div>
+
+        <div style="margin-top: 24px; display: flex; justify-content: center;">
+          <a href="#" class="btn btn-outline">Load 407 more results</a>
+        </div>
+
+        <!-- Map panel -->
+        <div style="margin-top: 32px;">
+          <h3 style="margin-bottom: 12px; font-size: 18px;">All 412 properties on the map</h3>
+          <div class="map-panel">
+            <svg class="map-svg" viewBox="0 0 800 640" preserveAspectRatio="xMidYMid slice">
+              <defs>
+                <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+                  <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#D4DEE9" stroke-width="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="800" height="640" fill="#EFF4F9"/>
+              <rect width="800" height="640" fill="url(#grid)"/>
+              <!-- Roads -->
+              <path d="M0 180 Q200 160 400 200 T800 180" stroke="#CDD6E0" stroke-width="18" fill="none"/>
+              <path d="M0 420 Q300 440 500 400 T800 440" stroke="#CDD6E0" stroke-width="14" fill="none"/>
+              <path d="M200 0 Q240 200 220 400 T260 640" stroke="#CDD6E0" stroke-width="14" fill="none"/>
+              <path d="M560 0 Q540 200 580 400 T540 640" stroke="#CDD6E0" stroke-width="14" fill="none"/>
+              <!-- River -->
+              <path d="M0 320 Q150 280 300 340 Q450 400 600 320 Q700 260 800 300" stroke="#B8D4E8" stroke-width="36" fill="none" stroke-linecap="round"/>
+              <!-- Parks -->
+              <circle cx="180" cy="300" r="60" fill="#D8E7CE" opacity="0.6"/>
+              <circle cx="620" cy="480" r="50" fill="#D8E7CE" opacity="0.6"/>
+              <rect x="350" y="100" width="120" height="80" fill="#D8E7CE" opacity="0.6" rx="4"/>
+            </svg>
+            <div class="map-pin hi" style="left: 26%; top: 30%;">€5,715 ×1.42</div>
+            <div class="map-pin" style="left: 54%; top: 25%;">€5,368 ×1.18</div>
+            <div class="map-pin hi active" style="left: 42%; top: 52%;">€6,240 ×1.56</div>
+            <div class="map-pin" style="left: 68%; top: 48%;">€12,480 ×1.34</div>
+            <div class="map-pin lo" style="left: 58%; top: 72%;">€1,870 ×0.92</div>
+            <div class="map-pin" style="left: 32%; top: 68%;">€4,290 ×1.12</div>
+            <div class="map-pin" style="left: 78%; top: 34%;">€8,820 ×1.28</div>
+            <div class="map-pin lo" style="left: 16%; top: 58%;">€3,140 ×0.98</div>
+          </div>
+        </div>
+
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-grid">
+      <div class="footer-col"><h5>Support</h5>
+        <ul><li><a href="#">Manage your bookings</a></li><li><a href="#">Contact customer service</a></li><li><a href="#">Safety resource center</a></li><li><a href="#">Insurance & liability</a></li></ul>
+      </div>
+      <div class="footer-col"><h5>Discover</h5>
+        <ul><li><a href="#">Selk Pro</a></li><li><a href="#">Seasonal offers</a></li><li><a href="#">Market index</a></li><li><a href="#">Editorial</a></li></ul>
+      </div>
+      <div class="footer-col"><h5>Terms</h5>
+        <ul><li><a href="#">Privacy notice</a></li><li><a href="#">Terms of service</a></li><li><a href="#">Cookie preferences</a></li><li><a href="#">Accessibility</a></li></ul>
+      </div>
+      <div class="footer-col"><h5>Partners</h5>
+        <ul><li><a href="dashboard.html">Extranet login</a></li><li><a href="dashboard.html">List your space</a></li><li><a href="#">Partner help</a></li><li><a href="#">API documentation</a></li></ul>
+      </div>
+      <div class="footer-col"><h5>About</h5>
+        <ul><li><a href="#">About Selk</a></li><li><a href="#">How we work</a></li><li><a href="#">Careers</a></li><li><a href="#">Press center</a></li></ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>
+        <div class="brand-word">Selk.com</div>
+        <p>Selk is a registered B2B marketplace for unused industrial storage space. Berlin · Rotterdam · Singapore · New York.</p>
+        <p style="margin-top: 6px;">Copyright © 2026 Selk Logistics GmbH. All rights reserved.</p>
+      </div>
+      <div class="partners">
+        <span>SELK.COM</span><span>SELK PRO</span><span>SELK CUSTOMS</span><span>SELK INSURE</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/app.js"></script>
+</body>
+</html>
