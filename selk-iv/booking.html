@@ -1,0 +1,100 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Complete your booking · The Wedding Hangar · Selk.com</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<!-- Header -->
+<header class="topbar">
+  <div class="wrap">
+    <div class="topbar-row">
+      <a href="index.html" class="brand">Selk.com <sup>B2B</sup></a>
+      <div class="topbar-right">
+        <a href="#">EUR</a>
+        <a href="#" class="icon-btn" aria-label="Language">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        </a>
+        <a href="#" class="icon-btn" aria-label="Help">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg>
+        </a>
+        <a href="login.html" class="btn-outline-w">Sign in</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap" style="padding-top:24px;">
+    <nav class="crumbs">
+      <a href="index.html">Selk</a> <span class="sep">></span>
+      <a href="search.html">Search</a> <span class="sep">></span>
+      <span style="color: var(--heading);">Book a space</span>
+    </nav>
+
+    <h1 class="checkout-title">Complete your booking</h1>
+
+    <div style="display:grid;grid-template-columns:1fr 360px;gap:32px;margin-top:24px;">
+      <div>
+        <div id="booking-summary" class="form-panel" style="margin-bottom:20px;">
+          <p style="color:var(--muted);">Loading listing details...</p>
+        </div>
+
+        <form id="booking-form" class="form-panel" novalidate>
+          <h3 style="margin-bottom:16px;">Booking details</h3>
+          <div class="form-grid">
+            <div class="field">
+              <label for="start_date">Start date</label>
+              <input id="start_date" name="start_date" type="date" required>
+            </div>
+            <div class="field">
+              <label for="end_date">End date</label>
+              <input id="end_date" name="end_date" type="date" required>
+            </div>
+            <div class="field full">
+              <label for="size_sqm">Floor area needed (m²)</label>
+              <input id="size_sqm" name="size_sqm" type="number" min="1" required placeholder="e.g. 120">
+            </div>
+            <div class="field full">
+              <label for="notes">Notes (optional)</label>
+              <input id="notes" name="notes" type="text" placeholder="What will you store? Special requirements?">
+            </div>
+            <div class="field full" id="booking-price" style="font-size:16px;padding:8px 0;"></div>
+            <div class="field full">
+              <button type="submit" class="btn btn-primary lg" style="width:100%;">Confirm booking</button>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div></div>
+    </div>
+  </div>
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="wrap">
+    <div class="footer-bottom">
+      <div>
+        <div class="brand-word">Selk.com</div>
+        <p>Selk is a registered B2B marketplace for unused industrial storage space. Berlin · Rotterdam · Singapore · New York.</p>
+        <p style="margin-top: 6px;">Copyright © 2026 Selk Logistics GmbH. All rights reserved.</p>
+      </div>
+      <div class="partners">
+        <span>SELK.COM</span><span>SELK PRO</span><span>SELK CUSTOMS</span><span>SELK INSURE</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/api.js"></script>
+<script src="assets/booking.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>

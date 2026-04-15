@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Create your Selk account</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/styles.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="topbar-row">
+      <a href="index.html" class="brand">Selk.com <sup>B2B</sup></a>
+      <div class="topbar-right">
+        <a href="login.html" class="btn-outline-w">Sign in</a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section class="section" style="min-height:70vh;display:flex;align-items:center;">
+  <div class="wrap" style="max-width:480px;">
+    <div class="form-panel" style="margin:0;">
+      <h2 style="font-size:24px;margin-bottom:6px;">Create your account</h2>
+      <p style="color:var(--muted);font-size:14px;margin-bottom:20px;">Join Selk to book and list B2B storage space.</p>
+      <form id="signup-form" class="form-grid" novalidate>
+        <div class="field full">
+          <label for="email">Work email</label>
+          <input id="email" name="email" type="email" required autocomplete="email" placeholder="you@company.com">
+        </div>
+        <div class="field full">
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" required autocomplete="new-password" minlength="8" placeholder="At least 8 characters">
+        </div>
+        <div class="field full">
+          <button type="submit" class="btn btn-primary lg" style="width:100%;">Create account</button>
+        </div>
+      </form>
+      <p style="text-align:center;font-size:13px;color:var(--muted);margin-top:16px;">
+        Already have an account? <a href="login.html">Sign in</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<script src="assets/auth.js"></script>
+</body>
+</html>

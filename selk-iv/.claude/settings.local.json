@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(systemctl status:*)",
+      "Bash(curl -s -X POST http://127.0.0.1:3001/api/auth/login -H \"Content-Type: application/json\" -d '{\"email\":\"renter@test.com\",\"password\":\"renter123!\"}')",
+      "Bash(python3 -m json.tool)",
+      "Read(//root/**)",
+      "Bash(npx create-next-app@latest selk-next --typescript --tailwind --app --src-dir --no-import-alias --eslint --use-npm)",
+      "Bash(curl -s http://127.0.0.1:3002/api/listings/1)",
+      "Bash(curl -s http://127.0.0.1:3002/)",
+      "Bash(curl:*)",
+      "Bash(fuser -k 3002/tcp)",
+      "Bash(cp -r /root/selk-next/public /root/selk-next/.next/standalone/public)",
+      "Bash(cp -r /root/selk-next/.next/static /root/selk-next/.next/standalone/.next/static)"
+    ]
+  }
+}
