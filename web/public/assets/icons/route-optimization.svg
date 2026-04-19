@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <!-- Map pin -->
+  <path d="M32 8c-9 0-16 7-16 16 0 12 16 28 16 28s16-16 16-28c0-9-7-16-16-16z" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Pin center circle -->
+  <circle cx="32" cy="24" r="6" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+  <!-- Pin center dot -->
+  <circle cx="32" cy="24" r="2" fill="#1a1a1a"/>
+  <!-- Route dots -->
+  <circle cx="20" cy="54" r="2" fill="#1a1a1a"/>
+  <circle cx="32" cy="58" r="2" fill="#1a1a1a"/>
+  <circle cx="44" cy="54" r="2" fill="#1a1a1a"/>
+  <!-- Route dashed line -->
+  <path d="M20 54q6 6 12 4t12-4" stroke="#1a1a1a" stroke-width="1.5" stroke-dasharray="3 3" fill="none" stroke-linecap="round"/>
+</svg>

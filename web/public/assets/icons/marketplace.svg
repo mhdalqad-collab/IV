@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <!-- Storefront awning -->
+  <path d="M8 24h48v4c0 4-4 8-8 8s-8-4-8-8c0 4-4 8-8 8s-8-4-8-8c0 4-4 8-8 8s-8-4-8-8V24z" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Roof line -->
+  <path d="M10 24L16 10h32l6 14" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Building body -->
+  <rect x="10" y="34" width="44" height="22" rx="1" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+  <!-- Door -->
+  <rect x="26" y="42" width="12" height="14" rx="1" stroke="#1a1a1a" stroke-width="2.5" fill="none"/>
+  <!-- Door handle -->
+  <circle cx="35" cy="50" r="1.5" fill="#1a1a1a"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" fill="none">
+  <!-- Gauge outer arc -->
+  <path d="M12 44a24 24 0 0 1 40 0" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Gauge inner arc -->
+  <path d="M18 44a18 18 0 0 1 28 0" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Needle -->
+  <line x1="32" y1="44" x2="22" y2="28" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Center dot -->
+  <circle cx="32" cy="44" r="3" fill="#1a1a1a"/>
+  <!-- Tick marks -->
+  <line x1="12" y1="44" x2="15" y2="44" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="16" y1="28" x2="18.5" y2="30" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="32" y1="20" x2="32" y2="23" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="48" y1="28" x2="45.5" y2="30" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <line x1="52" y1="44" x2="49" y2="44" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+  <!-- Base line -->
+  <line x1="10" y1="48" x2="54" y2="48" stroke="#1a1a1a" stroke-width="2.5" stroke-linecap="round"/>
+</svg>
