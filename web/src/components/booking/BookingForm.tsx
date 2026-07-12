@@ -1,18 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import type { Listing } from "@/types";
 import Price from "@/components/currency/Price";
-
-const ERROR_MAP: Record<string, string> = {
-  listing_not_found: "This listing is no longer available.",
-  cannot_book_own: "You cannot book your own listing.",
-  invalid_dates: "Please select valid start and end dates.",
-  invalid_size: "Please enter a valid floor area.",
-  default: "Something went wrong. Please try again.",
-};
+import { useT } from "@/components/i18n/LocaleProvider";
+import { bookingTotal } from "@/lib/bookingMath";
 
 export default function BookingForm({ listing }: { listing: Listing }) {
+  const t = useT();
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const [size, setSize] = useState(String(Math.min(Number(listing.size_sqm), 100)));
@@ -21,20 +17,38 @@ export default function BookingForm({ listing }: { listing: Listing }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState<number | null>(null);
 
+  function errorFor(data: { error?: string; available?: number; max?: number }) {
+    switch (data.error) {
+      case "listing_not_found":
+        return t("bookingPage.errors.listingNotFound");
+      case "cannot_book_own":
+        return t("bookingPage.errors.cannotBookOwn");
+      case "invalid_dates":
+        return t("bookingPage.errors.invalidDates");
+      case "invalid_size":
+        return t("bookingPage.errors.invalidSize");
+      case "size_exceeds_listing":
+        return t("bookingPage.errors.sizeExceeds", {
+          max: data.max ?? Number(listing.size_sqm),
+        });
+      case "insufficient_capacity":
+        return t("bookingPage.errors.insufficientCapacity", {
+          available: data.available ?? 0,
+        });
+      default:
+        return t("common.somethingWrong");
+    }
+  }
+
   const priceSqm = Number(listing.price_sqm);
   const sizeNum = Number(size) || 0;
 
-  let months = 0;
-  let total = 0;
-  if (startDate && endDate) {
-    const s = new Date(startDate);
-    const e = new Date(endDate);
-    if (e > s) {
-      const days = (e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24);
-      months = Math.max(1, Math.ceil(days / 30));
-      total = priceSqm * sizeNum * months;
-    }
-  }
+  const priced =
+    startDate && endDate
+      ? bookingTotal(priceSqm, sizeNum, startDate, endDate)
+      : null;
+  const months = priced ? Math.round(priced.months * 100) / 100 : 0;
+  const total = priced ? priced.total : 0;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -55,13 +69,13 @@ export default function BookingForm({ listing }: { listing: Listing }) {
       });
       const data = await res.json();
       if (!res.ok) {
-        setError(ERROR_MAP[data.error] || ERROR_MAP.default);
+        setError(errorFor(data));
         setLoading(false);
         return;
       }
       setSuccess(data.booking.id);
     } catch {
-      setError(ERROR_MAP.default);
+      setError(errorFor({}));
       setLoading(false);
     }
   }
@@ -70,8 +84,24 @@ export default function BookingForm({ listing }: { listing: Listing }) {
     return (
       <div className="text-center py-12">
         <div className="text-[48px] mb-4">&#10003;</div>
-        <h2 className="text-[22px] font-bold text-heading mb-2">Booking confirmed!</h2>
-        <p className="text-muted">Your booking ID is #{success}</p>
+        <h2 className="text-[22px] font-bold text-heading mb-2">{t("bookingPage.bookingSent")}</h2>
+        <p className="text-muted mb-6">
+          {t("bookingPage.awaitingConfirmation", { id: success })}
+        </p>
+        <div className="flex justify-center gap-3">
+          <Link
+            href="/bookings"
+            className="bg-bk-cta text-white font-bold px-5 py-2.5 rounded-[8px] text-[14px] hover:bg-bk-cta-hover transition-colors"
+          >
+            {t("bookingPage.viewMyBookings")}
+          </Link>
+          <Link
+            href="/search"
+            className="border border-border text-heading font-bold px-5 py-2.5 rounded-[8px] text-[14px] hover:bg-feature transition-colors"
+          >
+            {t("bookingPage.browseMore")}
+          </Link>
+        </div>
       </div>
     );
   }
@@ -85,7 +115,9 @@ export default function BookingForm({ listing }: { listing: Listing }) {
       )}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-[13px] font-semibold text-heading mb-1">Start date</label>
+          <label className="block text-[13px] font-semibold text-heading mb-1">
+            {t("bookingPage.startDate")}
+          </label>
           <input
             type="date"
             value={startDate}
@@ -95,7 +127,9 @@ export default function BookingForm({ listing }: { listing: Listing }) {
           />
         </div>
         <div>
-          <label className="block text-[13px] font-semibold text-heading mb-1">End date</label>
+          <label className="block text-[13px] font-semibold text-heading mb-1">
+            {t("bookingPage.endDate")}
+          </label>
           <input
             type="date"
             value={endDate}
@@ -107,7 +141,7 @@ export default function BookingForm({ listing }: { listing: Listing }) {
       </div>
       <div>
         <label className="block text-[13px] font-semibold text-heading mb-1">
-          Floor area needed (m&sup2;)
+          {t("bookingPage.floorArea")}
         </label>
         <input
           type="number"
@@ -120,7 +154,7 @@ export default function BookingForm({ listing }: { listing: Listing }) {
         />
       </div>
       <div>
-        <label className="block text-[13px] font-semibold text-heading mb-1">Notes (optional)</label>
+        <label className="block text-[13px] font-semibold text-heading mb-1">{t("bookingPage.notes")}</label>
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -132,10 +166,12 @@ export default function BookingForm({ listing }: { listing: Listing }) {
       {total > 0 && (
         <div className="bg-feature rounded-[8px] p-4 text-[14px]">
           <span className="font-bold text-heading">
-            Estimated total: <Price amount={total} decimals={0} />
+            {t("bookingPage.estimatedTotal")} <Price amount={total} decimals={0} />
           </span>
-          <span className="text-muted ml-2">
-            ({months} month{months !== 1 ? "s" : ""} &times; {sizeNum} m&sup2;)
+          <span className="text-muted ms-2">
+            {months === 1
+              ? t("bookingPage.breakdownSingular", { months, size: sizeNum })
+              : t("bookingPage.breakdownPlural", { months, size: sizeNum })}
           </span>
         </div>
       )}
@@ -145,7 +181,7 @@ export default function BookingForm({ listing }: { listing: Listing }) {
         disabled={loading}
         className="w-full bg-bk-cta text-white font-bold py-3 rounded-[8px] hover:bg-bk-cta-hover disabled:opacity-60 transition-colors"
       >
-        {loading ? "Processing..." : "Confirm booking"}
+        {loading ? t("common.processing") : t("bookingPage.confirmBooking")}
       </button>
     </form>
   );

@@ -5,16 +5,20 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",
+    "postbuild": "cp -rn .next/standalone/public/uploads/. public/uploads/ 2>/dev/null; rm -rf .next/standalone/public .next/standalone/.next/static && ln -sT $PWD/public .next/standalone/public && ln -sT $PWD/.next/static .next/standalone/.next/static && (chown selk:selk public/uploads 2>/dev/null || true)",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@types/leaflet": "^1.9.21",
     "bcryptjs": "^3.0.3",
+    "leaflet": "^1.9.4",
     "next": "15.5.15",
     "next-auth": "^5.0.0-beta.30",
     "pg": "^8.20.0",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-leaflet": "^5.0.0",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

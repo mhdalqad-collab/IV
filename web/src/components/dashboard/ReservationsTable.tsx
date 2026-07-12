@@ -4,6 +4,8 @@ import type { Booking } from "@/types";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import Price from "@/components/currency/Price";
+import { useT } from "@/components/i18n/LocaleProvider";
+import type { TranslationKey } from "@/lib/i18n";
 
 function formatDate(d: string | Date | undefined): string {
   if (!d) return "";
@@ -24,50 +26,80 @@ export default function ReservationsTable({
   reservations: Booking[];
 }) {
   const router = useRouter();
+  const t = useT();
   const [loading, setLoading] = useState<number | null>(null);
+  const [error, setError] = useState("");
 
   async function confirmBooking(id: number) {
     setLoading(id);
-    await fetch(`/api/bookings/${id}/confirm`, { method: "PATCH" });
+    setError("");
+    try {
+      const res = await fetch(`/api/bookings/${id}/confirm`, {
+        method: "PATCH",
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        setError(
+          data.error === "insufficient_capacity"
+            ? t("reservations.insufficientCapacity", {
+                available: data.available ?? 0,
+              })
+            : t("common.somethingWrong")
+        );
+      }
+    } catch {
+      setError(t("common.somethingWrong"));
+    }
     setLoading(null);
     router.refresh();
   }
 
+  function statusLabel(status: string) {
+    const key = `bookingStatus.${status}` as TranslationKey;
+    const v = t(key);
+    return v === key ? status : v;
+  }
+
   return (
     <div className="overflow-x-auto">
+      {error && (
+        <div className="bg-bk-red-soft text-bk-red p-3 rounded-[8px] text-[13px] font-semibold mb-3">
+          {error}
+        </div>
+      )}
       <table className="w-full text-[13px]">
         <thead>
-          <tr className="text-left text-[11px] font-bold text-muted uppercase border-b border-border">
-            <th className="py-2 pr-3">Listing</th>
-            <th className="py-2 pr-3">Renter</th>
-            <th className="py-2 pr-3">Dates</th>
-            <th className="py-2 pr-3">Size</th>
-            <th className="py-2 pr-3">Total</th>
-            <th className="py-2 pr-3">Status</th>
+          <tr className="text-start text-[11px] font-bold text-muted uppercase border-b border-border">
+            <th className="py-2 pe-3 text-start">{t("reservations.listing")}</th>
+            <th className="py-2 pe-3 text-start">{t("reservations.renter")}</th>
+            <th className="py-2 pe-3 text-start">{t("reservations.dates")}</th>
+            <th className="py-2 pe-3 text-start">{t("reservations.size")}</th>
+            <th className="py-2 pe-3 text-start">{t("reservations.total")}</th>
+            <th className="py-2 pe-3 text-start">{t("reservations.status")}</th>
             <th className="py-2"></th>
           </tr>
         </thead>
         <tbody>
           {reservations.map((r) => (
             <tr key={r.id} className="border-b border-border">
-              <td className="py-3 pr-3 font-semibold text-heading">
+              <td className="py-3 pe-3 font-semibold text-heading">
                 {r.listing_title}
               </td>
-              <td className="py-3 pr-3">{r.renter_email}</td>
-              <td className="py-3 pr-3 whitespace-nowrap">
+              <td className="py-3 pe-3">{r.renter_email}</td>
+              <td className="py-3 pe-3 whitespace-nowrap">
                 {formatDate(r.start_date)} &rarr; {formatDate(r.end_date)}
               </td>
-              <td className="py-3 pr-3">{Number(r.size_sqm)} m&sup2;</td>
-              <td className="py-3 pr-3 font-semibold">
+              <td className="py-3 pe-3">{Number(r.size_sqm)} {t("common.sqm")}</td>
+              <td className="py-3 pe-3 font-semibold">
                 <Price amount={Number(r.total_price)} decimals={0} />
               </td>
-              <td className="py-3 pr-3">
+              <td className="py-3 pe-3">
                 <span
                   className={`inline-block px-2 py-0.5 rounded-[999px] text-[11px] font-bold ${
                     STATUS_COLORS[r.status] || "bg-feature text-muted"
                   }`}
                 >
-                  {r.status}
+                  {statusLabel(r.status)}
                 </span>
               </td>
               <td className="py-3">
@@ -77,7 +109,7 @@ export default function ReservationsTable({
                     disabled={loading === r.id}
                     className="bg-bk-green text-white text-[12px] font-bold px-3 py-1 rounded-[6px] hover:opacity-90 disabled:opacity-50"
                   >
-                    {loading === r.id ? "..." : "Confirm"}
+                    {loading === r.id ? "..." : t("reservations.confirm")}
                   </button>
                 )}
               </td>

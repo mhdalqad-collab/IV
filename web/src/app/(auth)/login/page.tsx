@@ -4,15 +4,11 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
-const ERROR_MAP: Record<string, string> = {
-  CredentialsSignin: "Email or password is incorrect.",
-  invalid_credentials: "Email or password is incorrect.",
-  default: "Something went wrong. Please try again.",
-};
+import { useT } from "@/components/i18n/LocaleProvider";
 
 export default function LoginPage() {
   const router = useRouter();
+  const t = useT();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -29,7 +25,12 @@ export default function LoginPage() {
     });
 
     if (result?.error) {
-      setError(ERROR_MAP[result.error] || ERROR_MAP.default);
+      const code = result.error;
+      const msg =
+        code === "CredentialsSignin" || code === "invalid_credentials"
+          ? t("login.errors.credentials")
+          : t("common.somethingWrong");
+      setError(msg);
       setLoading(false);
     } else {
       router.push("/");
@@ -42,11 +43,9 @@ export default function LoginPage() {
       <div className="w-full max-w-[480px] px-6">
         <div className="bg-white rounded-[16px] shadow-md p-8">
           <h2 className="text-[24px] font-bold text-heading mb-1">
-            Welcome back
+            {t("login.title")}
           </h2>
-          <p className="text-muted text-[14px] mb-5">
-            Sign in to manage your bookings and listings.
-          </p>
+          <p className="text-muted text-[14px] mb-5">{t("login.subtitle")}</p>
           {error && (
             <div className="bg-bk-red-soft text-bk-red p-3 rounded-[8px] text-[13px] font-semibold mb-3">
               {error}
@@ -55,7 +54,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-[13px] font-semibold text-heading mb-1">
-                Email
+                {t("login.email")}
               </label>
               <input
                 id="email"
@@ -63,13 +62,13 @@ export default function LoginPage() {
                 type="email"
                 required
                 autoComplete="email"
-                placeholder="you@company.com"
+                placeholder={t("login.emailPlaceholder")}
                 className="w-full border border-border rounded-[8px] px-3 py-2.5 text-[14px] outline-none focus:border-bk-cta focus:ring-2 focus:ring-bk-cta-soft transition"
               />
             </div>
             <div>
               <label htmlFor="password" className="block text-[13px] font-semibold text-heading mb-1">
-                Password
+                {t("login.password")}
               </label>
               <input
                 id="password"
@@ -77,7 +76,7 @@ export default function LoginPage() {
                 type="password"
                 required
                 autoComplete="current-password"
-                placeholder="Your password"
+                placeholder={t("login.passwordPlaceholder")}
                 className="w-full border border-border rounded-[8px] px-3 py-2.5 text-[14px] outline-none focus:border-bk-cta focus:ring-2 focus:ring-bk-cta-soft transition"
               />
             </div>
@@ -86,13 +85,13 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full bg-bk-cta text-white font-bold py-3 rounded-[8px] hover:bg-bk-cta-hover disabled:opacity-60 transition-colors"
             >
-              {loading ? "Please wait..." : "Sign in"}
+              {loading ? t("common.pleaseWait") : t("login.submit")}
             </button>
           </form>
           <p className="text-center text-[13px] text-muted mt-4">
-            New to Selk?{" "}
+            {t("login.newToSelk")}{" "}
             <Link href="/signup" className="text-bk-cta font-semibold">
-              Create an account
+              {t("login.createAccount")}
             </Link>
           </p>
         </div>

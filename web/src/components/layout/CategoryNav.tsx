@@ -1,70 +1,74 @@
-import Link from "next/link";
+"use client";
 
-const features = [
-  { label: "Marketplace", src: "/assets/icons/marketplace.svg", href: null },
-  { label: "Dashboards", src: "/assets/icons/dashboards.svg", href: null },
-  { label: "Route Optimization", src: "/assets/icons/route-optimization.svg", href: null },
-  { label: "IoT Monitoring", src: "/assets/icons/iot-monitoring.svg", href: null },
-  { label: "AI Forecasting", src: "/assets/icons/ai-forecasting.svg", href: "/ai-forecasting" },
-  { label: "Cost vs Trade", src: "/assets/icons/cost-vs-trade.svg", href: null },
+import Link from "next/link";
+import { useT } from "@/components/i18n/LocaleProvider";
+import type { TranslationKey } from "@/lib/i18n";
+
+const features: Array<{
+  key: TranslationKey;
+  src: string;
+  href: string | null;
+}> = [
+  { key: "nav.marketplace", src: "/assets/icons/marketplace.svg", href: "/search?type=warehouse" },
+  { key: "nav.dashboards", src: "/assets/icons/dashboards.svg", href: "/ai-forecasting" },
+  { key: "nav.routeOptimization", src: "/assets/icons/route-optimization.svg", href: null },
+  { key: "nav.iotMonitoring", src: "/assets/icons/iot-monitoring.svg", href: null },
+  { key: "nav.aiForecasting", src: "/assets/icons/ai-forecasting.svg", href: null },
+  { key: "nav.costVsTrade", src: "/assets/icons/cost-vs-trade.svg", href: null },
 ];
 
-export default function CategoryNav() {
+const baseClasses =
+  "relative flex flex-col items-center gap-1.5 px-5 py-3 text-[13px] font-medium border-b-2 border-transparent transition-all whitespace-nowrap";
+const activeClasses = "text-white/70 hover:text-white hover:border-white/80";
+const disabledClasses = "text-white/40 cursor-not-allowed";
+
+function SoonBadge({ label }: { label: string }) {
   return (
-    <div className="border-t border-white/10">
-      <div className="max-w-[1280px] mx-auto px-6">
-        <nav className="flex items-center gap-1 overflow-x-auto py-1" aria-label="Categories">
+    <span className="absolute top-0.5 end-0.5 text-[8px] font-extrabold uppercase tracking-wider bg-bk-amber text-bk-blue px-1.5 py-0.5 rounded-full leading-none">
+      {label}
+    </span>
+  );
+}
+
+export default function CategoryNav() {
+  const t = useT();
+  return (
+    <nav
+      className="flex items-center gap-1 overflow-x-auto pb-6"
+      aria-label={t("nav.categories")}
+    >
+      {features.map((f) => {
+        const label = t(f.key);
+        const content = (
+          <>
+            <img
+              src={f.src}
+              alt={label}
+              className="w-14 h-14"
+              style={{ filter: "brightness(0) invert(1)" }}
+            />
+            {label}
+            {!f.href && <SoonBadge label={t("nav.soon")} />}
+          </>
+        );
+        return f.href ? (
           <Link
-            href="/search?type=warehouse"
-            className="flex flex-col items-center gap-1 px-4 py-2.5 text-[12px] font-medium text-white/70 hover:text-white border-b-2 border-transparent hover:border-white/80 transition-all whitespace-nowrap"
+            key={f.key}
+            href={f.href}
+            className={`${baseClasses} ${activeClasses}`}
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={1.8}
-              className="w-5 h-5"
-            >
-              <path d="M3 10v10h18V10" />
-              <path d="M2 10l10-7 10 7" />
-              <path d="M9 20v-6h6v6" />
-            </svg>
-            Warehouses
+            {content}
           </Link>
-
-          <span className="mx-2 h-8 w-px bg-white/20" aria-hidden="true" />
-
-          {features.map((f) => {
-            const content = (
-              <>
-                <img
-                  src={f.src}
-                  alt={f.label}
-                  className="w-5 h-5"
-                  style={{ filter: "brightness(0) invert(1)" }}
-                />
-                {f.label}
-              </>
-            );
-            return f.href ? (
-              <Link
-                key={f.label}
-                href={f.href}
-                className="flex flex-col items-center gap-1 px-4 py-2.5 text-[12px] font-medium text-white/70 hover:text-white border-b-2 border-transparent hover:border-white/80 transition-all whitespace-nowrap"
-              >
-                {content}
-              </Link>
-            ) : (
-              <span
-                key={f.label}
-                className="flex flex-col items-center gap-1 px-4 py-2.5 text-[12px] font-medium text-white/70 whitespace-nowrap"
-              >
-                {content}
-              </span>
-            );
-          })}
-        </nav>
-      </div>
-    </div>
+        ) : (
+          <span
+            key={f.key}
+            className={`${baseClasses} ${disabledClasses}`}
+            aria-disabled="true"
+          >
+            {content}
+          </span>
+        );
+      })}
+    </nav>
   );
 }

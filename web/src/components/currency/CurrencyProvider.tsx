@@ -10,7 +10,7 @@ type Ctx = {
 };
 
 const CurrencyContext = createContext<Ctx>({
-  currency: "EUR",
+  currency: "OMR",
   setCurrency: () => {},
   mounted: false,
 });
@@ -22,7 +22,7 @@ export default function CurrencyProvider({
 }: {
   children: React.ReactNode;
 }) {
-  const [currency, setCurrencyState] = useState<Currency>("EUR");
+  const [currency, setCurrencyState] = useState<Currency>("OMR");
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {

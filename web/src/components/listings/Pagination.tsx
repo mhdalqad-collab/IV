@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
+import { useT } from "@/components/i18n/LocaleProvider";
 
 export default function Pagination({
   currentPage,
@@ -11,6 +12,7 @@ export default function Pagination({
 }) {
   const router = useRouter();
   const sp = useSearchParams();
+  const t = useT();
 
   function goToPage(page: number) {
     const params = new URLSearchParams(sp.toString());
@@ -27,7 +29,7 @@ export default function Pagination({
         disabled={currentPage <= 1}
         className="px-3 py-2 text-[13px] font-semibold text-muted rounded-[8px] hover:bg-feature disabled:opacity-30"
       >
-        &larr; Prev
+        {t("pagination.prev")}
       </button>
       {pages.map((p) => (
         <button
@@ -47,7 +49,7 @@ export default function Pagination({
         disabled={currentPage >= totalPages}
         className="px-3 py-2 text-[13px] font-semibold text-muted rounded-[8px] hover:bg-feature disabled:opacity-30"
       >
-        Next &rarr;
+        {t("pagination.next")}
       </button>
     </div>
   );

@@ -86,7 +86,7 @@ export async function GET(request: NextRequest) {
 
     const dataQ = await pool.query(
       `SELECT id, user_id, title, description, type, city, country, address, lat, lng,
-              size_sqm, slots, price_sqm, currency, amenities, images, rating, review_count,
+              size_sqm, slots, price_sqm, currency, amenities, images, videos, rating, review_count,
               free_cancel, insurance, created_at
        FROM listings ${where}
        ORDER BY ${order}
@@ -132,6 +132,7 @@ export async function POST(request: NextRequest) {
     currency,
     amenities,
     images,
+    videos,
     free_cancel,
     insurance,
   } = body;
@@ -156,10 +157,19 @@ export async function POST(request: NextRequest) {
   if (slotsVal === null)
     return NextResponse.json({ error: "invalid_slots" }, { status: 400 });
 
+  const latVal = lat == null || lat === "" ? null : Number(lat);
+  const lngVal = lng == null || lng === "" ? null : Number(lng);
+  if (
+    (latVal !== null && !(latVal >= -90 && latVal <= 90)) ||
+    (lngVal !== null && !(lngVal >= -180 && lngVal <= 180)) ||
+    (latVal === null) !== (lngVal === null)
+  )
+    return NextResponse.json({ error: "invalid_location" }, { status: 400 });
+
   try {
     const { rows } = await pool.query(
-      `INSERT INTO listings (user_id, title, description, type, city, country, address, lat, lng, size_sqm, slots, price_sqm, currency, amenities, images, free_cancel, insurance)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+      `INSERT INTO listings (user_id, title, description, type, city, country, address, lat, lng, size_sqm, slots, price_sqm, currency, amenities, images, videos, free_cancel, insurance)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
        RETURNING *`,
       [
         userId,
@@ -169,14 +179,15 @@ export async function POST(request: NextRequest) {
         city,
         country || "OM",
         address || "",
-        lat || null,
-        lng || null,
+        latVal,
+        lngVal,
         size_sqm,
         slotsVal,
         price_sqm,
-        currency || "EUR",
+        currency || "OMR",
         amenities || [],
         images || [],
+        videos || [],
         free_cancel || false,
         insurance || false,
       ]

@@ -75,6 +75,7 @@ export async function PUT(
       "currency",
       "amenities",
       "images",
+      "videos",
       "free_cancel",
       "insurance",
     ];

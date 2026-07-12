@@ -5,7 +5,7 @@ import { CURRENCIES, type Currency } from "@/lib/currency";
 
 export default function CurrencySelector() {
   const { currency, setCurrency, mounted } = useCurrency();
-  const value = mounted ? currency : "EUR";
+  const value = mounted ? currency : "OMR";
 
   return (
     <select

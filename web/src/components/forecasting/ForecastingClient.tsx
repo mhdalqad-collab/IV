@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useRef, useState } from "react";
+import { useT } from "@/components/i18n/LocaleProvider";
+import type { TranslationKey } from "@/lib/i18n";
 
 type Fields = {
   name?: string;
@@ -25,11 +27,18 @@ type Fields = {
   minBooking?: number;
 };
 
+type DemandKey =
+  | "pharma"
+  | "food"
+  | "ecom"
+  | "construction"
+  | "ogEquip"
+  | "sme"
+  | "freeZone";
+
 type Demand = {
-  category: string;
+  key: DemandKey;
   probability: number;
-  renter: string;
-  duration: string;
   revenueLow: number;
   revenueHigh: number;
 };
@@ -149,58 +158,44 @@ function computeDemand(f: Fields): Demand[] {
 
   return [
     {
-      category: "Pharmaceutical / GDP Cold",
+      key: "pharma",
       probability: cold && f.gdp ? 95 : cold ? 55 : 15,
-      renter: "Pharma importer / distributor",
-      duration: "6–12 months",
       revenueLow: 800,
       revenueHigh: 2500,
     },
     {
-      category: "Food & Beverage (Cold Chain)",
+      key: "food",
       probability: cold && f.haccp ? 85 : cold ? 70 : 20,
-      renter: "FMCG importer, F&B distributor",
-      duration: "1–3 months",
       revenueLow: 400,
       revenueHigh: 1200,
     },
     {
-      category: "eCommerce Fulfillment",
+      key: "ecom",
       probability: urban ? 75 : 40,
-      renter: "D2C brand, Amazon/Noon seller",
-      duration: "Weekly – Monthly",
       revenueLow: 200,
       revenueHigh: 800,
     },
     {
-      category: "Construction Materials",
+      key: "construction",
       probability: f.crane ? 65 : 30,
-      renter: "Developer / contractor",
-      duration: "3–6 months",
       revenueLow: 300,
       revenueHigh: 600,
     },
     {
-      category: "O&G Equipment",
+      key: "ogEquip",
       probability: f.crane && nearPort ? 55 : f.crane ? 35 : 15,
-      renter: "Oilfield services company",
-      duration: "6–24 months",
       revenueLow: 1000,
       revenueHigh: 5000,
     },
     {
-      category: "SME / General Goods",
+      key: "sme",
       probability: isDryGeneral ? 85 : 55,
-      renter: "SME importer, retailer, trader",
-      duration: "Monthly",
       revenueLow: 150,
       revenueHigh: 500,
     },
     {
-      category: "Free Zone / Re-export",
+      key: "freeZone",
       probability: nearPort ? 65 : 25,
-      renter: "Re-exporter / international trader",
-      duration: "3–12 months",
       revenueLow: 500,
       revenueHigh: 2000,
     },
@@ -228,12 +223,12 @@ function readinessScore(f: Fields): number {
 
 function monthlyRevenue(f: Fields, ratio: number): number {
   if (!f.area || !f.rate) return 0;
-  // Rough pallets estimate: 1 pallet per ~2 sqm
   const pallets = f.area / 2;
   return Math.round(pallets * f.rate * ratio);
 }
 
 export default function ForecastingClient() {
+  const t = useT();
   const [fields, setFields] = useState<Fields | null>(null);
   const [fileName, setFileName] = useState<string>("");
   const [loading, setLoading] = useState(false);
@@ -268,12 +263,12 @@ export default function ForecastingClient() {
       }
     } catch (e) {
       setError(
-        e instanceof Error ? e.message : "Could not parse file. Please upload a valid .xlsx"
+        e instanceof Error ? e.message : t("forecasting.upload.parseError")
       );
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [t]);
 
   function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -329,11 +324,10 @@ export default function ForecastingClient() {
             </svg>
           </div>
           <h2 className="text-[18px] font-bold text-heading mb-1">
-            Upload your warehouse data
+            {t("forecasting.upload.title")}
           </h2>
           <p className="text-[13px] text-muted mb-5 max-w-[420px] mx-auto">
-            Drag &amp; drop an Excel file (.xlsx) or click below to browse. Use the
-            Intellventory template on the right for best results.
+            {t("forecasting.upload.subtitle")}
           </p>
           <input
             ref={inputRef}
@@ -347,7 +341,7 @@ export default function ForecastingClient() {
             htmlFor="wh-file"
             className="inline-block bg-bk-cta text-white font-bold text-[14px] px-6 py-2.5 rounded-[8px] cursor-pointer hover:bg-bk-cta-hover transition-colors"
           >
-            {loading ? "Processing..." : "Choose file"}
+            {loading ? t("forecasting.upload.processing") : t("forecasting.upload.chooseFile")}
           </label>
           {fileName && !loading && (
             <div className="text-[12px] text-muted mt-3">{fileName}</div>
@@ -357,33 +351,30 @@ export default function ForecastingClient() {
           )}
 
           <div className="mt-8 pt-6 border-t border-border text-[12px] text-muted">
-            Want a quick preview?{" "}
+            {t("forecasting.upload.sampleHint")}{" "}
             <button
               onClick={useSample}
               className="text-bk-cta font-semibold hover:underline"
             >
-              Load sample data
+              {t("forecasting.upload.loadSample")}
             </button>
           </div>
         </div>
 
         <aside className="bg-white border border-border rounded-[16px] p-5 h-fit">
-          <h3 className="text-[14px] font-bold text-heading mb-2">Template</h3>
-          <p className="text-[12px] text-muted mb-4">
-            Download our Intellventory warehouse input template to ensure the AI
-            reads every field correctly.
-          </p>
+          <h3 className="text-[14px] font-bold text-heading mb-2">{t("forecasting.upload.template")}</h3>
+          <p className="text-[12px] text-muted mb-4">{t("forecasting.upload.templateDesc")}</p>
           <a
             href="/assets/icons/Intellventory_Investor_Ch.xlsx"
             download
             className="block w-full bg-feature text-heading text-center font-semibold text-[13px] py-2.5 rounded-[8px] hover:bg-border transition-colors"
           >
-            Download template (.xlsx)
+            {t("forecasting.upload.download")}
           </a>
           <ul className="mt-5 space-y-2 text-[12px] text-muted">
-            <li>• 1 sheet, 3 sections</li>
-            <li>• Warehouse profile + auto KPIs</li>
-            <li>• Demand match signals</li>
+            <li>{t("forecasting.upload.bullets.oneSheet")}</li>
+            <li>{t("forecasting.upload.bullets.profile")}</li>
+            <li>{t("forecasting.upload.bullets.demand")}</li>
           </ul>
         </aside>
       </div>
@@ -396,7 +387,6 @@ export default function ForecastingClient() {
   const potential = monthlyRevenue(fields, (fields.occupancy ?? 0) / 100);
   const lost = monthlyRevenue(fields, (fields.vacancy ?? 0) / 100);
 
-  // Benchmark comparison (Your vs Oman vs GCC)
   const OMAN_OCC = 62;
   const GCC_OCC = 72;
 
@@ -409,14 +399,8 @@ export default function ForecastingClient() {
         <div className="bg-bk-amber-soft border border-bk-amber/40 rounded-[12px] p-4 flex items-start gap-3">
           <div className="text-[20px] leading-none">⚠️</div>
           <div className="text-[13px]">
-            <div className="font-bold text-heading">
-              Showing sample analysis
-            </div>
-            <div className="text-muted">
-              We couldn&apos;t detect filled-in values in your upload — the
-              template&apos;s blue cells are still placeholders. Fill them in
-              and upload again to see your own numbers.
-            </div>
+            <div className="font-bold text-heading">{t("forecasting.sample.heading")}</div>
+            <div className="text-muted">{t("forecasting.sample.body")}</div>
           </div>
         </div>
       )}
@@ -428,19 +412,19 @@ export default function ForecastingClient() {
             {fileName}
           </div>
           <h2 className="text-[22px] font-extrabold text-heading">
-            {fields.name || "Unnamed warehouse"}
+            {fields.name || t("forecasting.header.unnamed")}
           </h2>
           <p className="text-[13px] text-muted">
-            {fields.location || "Location unknown"} ·{" "}
+            {fields.location || t("forecasting.header.locationUnknown")} ·{" "}
             {fields.storageType || "—"} ·{" "}
-            {fields.area ? `${fields.area.toLocaleString()} m²` : "— m²"}
+            {fields.area ? `${fields.area.toLocaleString()} ${t("common.sqm")}` : `— ${t("common.sqm")}`}
           </p>
         </div>
         <button
           onClick={reset}
           className="text-[13px] font-semibold text-bk-cta hover:underline whitespace-nowrap"
         >
-          Upload different file
+          {t("forecasting.header.uploadDifferent")}
         </button>
       </div>
 
@@ -448,35 +432,39 @@ export default function ForecastingClient() {
       <div className="grid grid-cols-4 gap-4">
         {[
           {
-            label: "Occupancy",
+            label: t("forecasting.kpi.occupancy"),
             value: occ ? `${occ}%` : "—",
-            hint: `Oman avg ${OMAN_OCC}%`,
+            hint: t("forecasting.kpi.omanAvg", { pct: OMAN_OCC }),
             tone: occ >= 70 ? "green" : occ >= 50 ? "amber" : "red",
           },
           {
-            label: "Vacancy",
+            label: t("forecasting.kpi.vacancy"),
             value: vac ? `${vac}%` : "—",
-            hint: vac > 50 ? "🔴 urgent listing" : vac > 30 ? "⚠️ list on platform" : "✅ healthy",
+            hint: vac > 50
+              ? t("forecasting.kpi.vacUrgent")
+              : vac > 30
+                ? t("forecasting.kpi.vacWarn")
+                : t("forecasting.kpi.vacHealthy"),
             tone: vac > 50 ? "red" : vac > 30 ? "amber" : "green",
           },
           {
-            label: "Readiness score",
+            label: t("forecasting.kpi.readiness"),
             value: `${readiness}/100`,
             hint:
               readiness >= 80
-                ? "Top placement"
+                ? t("forecasting.kpi.readinessTop")
                 : readiness >= 60
-                  ? "Visible in search"
-                  : "Low visibility",
+                  ? t("forecasting.kpi.readinessVisible")
+                  : t("forecasting.kpi.readinessLow"),
             tone: readiness >= 80 ? "green" : readiness >= 60 ? "amber" : "red",
           },
           {
-            label: "Port proximity",
+            label: t("forecasting.kpi.portProximity"),
             value: `${portProx}/10`,
             hint:
               typeof fields.portKm === "number"
-                ? `${fields.portKm} km to port`
-                : "Distance unknown",
+                ? t("forecasting.kpi.portKm", { km: fields.portKm })
+                : t("forecasting.kpi.portUnknown"),
             tone: portProx >= 7 ? "green" : portProx >= 4 ? "amber" : "red",
           },
         ].map((k) => (
@@ -510,49 +498,52 @@ export default function ForecastingClient() {
         {/* Revenue card */}
         <div className="bg-white border border-border rounded-[16px] p-5">
           <h3 className="text-[14px] font-bold text-heading mb-3">
-            Revenue outlook (monthly)
+            {t("forecasting.revenue.title")}
           </h3>
           <div className="grid grid-cols-2 gap-4">
             <div className="bg-feature rounded-[12px] p-4">
               <div className="text-[11px] font-bold text-muted uppercase">
-                Earning now
+                {t("forecasting.revenue.earningNow")}
               </div>
               <div className="text-[24px] font-extrabold text-bk-green">
                 ${potential.toLocaleString()}
               </div>
               <div className="text-[11px] text-muted">
-                @ {occ}% occupancy × {fields.rate ?? 0} / pallet
+                {t("forecasting.revenue.occupancyDetail", { occ, rate: fields.rate ?? 0 })}
               </div>
             </div>
             <div className="bg-bk-red-soft rounded-[12px] p-4">
               <div className="text-[11px] font-bold text-muted uppercase">
-                Lost to vacancy
+                {t("forecasting.revenue.lostToVacancy")}
               </div>
               <div className="text-[24px] font-extrabold text-bk-red">
                 ${lost.toLocaleString()}
               </div>
               <div className="text-[11px] text-muted">
-                Unlock by listing on Selk
+                {t("forecasting.revenue.unlock")}
               </div>
             </div>
           </div>
           <div className="mt-4 text-[12px] text-muted">
-            Based on {fields.area ? `${fields.area.toLocaleString()} m²` : "area"}{" "}
-            ≈ {fields.area ? Math.round(fields.area / 2).toLocaleString() : "—"}{" "}
-            pallet capacity.
+            {fields.area
+              ? t("forecasting.revenue.basedOn", {
+                  area: fields.area.toLocaleString(),
+                  pallets: Math.round(fields.area / 2).toLocaleString(),
+                })
+              : t("forecasting.revenue.basedOnNoArea")}
           </div>
         </div>
 
         {/* Benchmark bar chart */}
         <div className="bg-white border border-border rounded-[16px] p-5">
           <h3 className="text-[14px] font-bold text-heading mb-4">
-            Occupancy benchmark
+            {t("forecasting.benchmark.title")}
           </h3>
           <BarChart
             rows={[
-              { label: "Your WH", value: occ, color: "#194f82" },
-              { label: "Oman avg", value: OMAN_OCC, color: "#8aa6c1" },
-              { label: "GCC avg", value: GCC_OCC, color: "#c2d4e3" },
+              { label: t("forecasting.benchmark.yourWH"), value: occ, color: "#194f82" },
+              { label: t("forecasting.benchmark.omanAvg"), value: OMAN_OCC, color: "#8aa6c1" },
+              { label: t("forecasting.benchmark.gccAvg"), value: GCC_OCC, color: "#c2d4e3" },
             ]}
           />
         </div>
@@ -562,37 +553,75 @@ export default function ForecastingClient() {
       <div className="grid grid-cols-[320px_1fr] gap-4">
         <div className="bg-white border border-border rounded-[16px] p-5">
           <h3 className="text-[14px] font-bold text-heading mb-3">
-            Space utilization
+            {t("forecasting.space.title")}
           </h3>
-          <Donut occupied={occ} vacant={vac} />
+          <Donut
+            occupied={occ}
+            vacant={vac}
+            occupiedLabel={t("forecasting.space.occupied")}
+            vacantLabel={t("forecasting.space.vacant")}
+            inSvgLabel={t("forecasting.space.occupiedLabel")}
+          />
         </div>
 
         <div className="bg-white border border-border rounded-[16px] p-5">
           <h3 className="text-[14px] font-bold text-heading mb-3">
-            Profile details
+            {t("forecasting.profile.title")}
           </h3>
           <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-[13px]">
-            <ProfileRow label="Years of operation" value={fields.years} />
-            <ProfileRow label="Loading bays" value={fields.bays} />
-            <ProfileRow label="Racking" value={fields.racking} />
-            <ProfileRow label="Temperature" value={fields.tempRange} />
-            <ProfileRow label="Security" value={fields.security} />
-            <ProfileRow label="Fire suppression" value={fields.fire} />
+            <ProfileRow label={t("forecasting.profile.years")} value={fields.years} />
+            <ProfileRow label={t("forecasting.profile.bays")} value={fields.bays} />
+            <ProfileRow label={t("forecasting.profile.racking")} value={fields.racking} />
+            <ProfileRow label={t("forecasting.profile.temperature")} value={fields.tempRange} />
+            <ProfileRow label={t("forecasting.profile.security")} value={fields.security} />
+            <ProfileRow label={t("forecasting.profile.fire")} value={fields.fire} />
             <ProfileRow
-              label="GDP / GMP"
-              value={fields.gdp === undefined ? undefined : fields.gdp ? "Certified" : "Not certified"}
+              label={t("forecasting.profile.gdp")}
+              value={
+                fields.gdp === undefined
+                  ? undefined
+                  : fields.gdp
+                    ? t("forecasting.profile.certified")
+                    : t("forecasting.profile.notCertified")
+              }
             />
             <ProfileRow
-              label="HACCP"
-              value={fields.haccp === undefined ? undefined : fields.haccp ? "Certified" : "Not certified"}
+              label={t("forecasting.profile.haccp")}
+              value={
+                fields.haccp === undefined
+                  ? undefined
+                  : fields.haccp
+                    ? t("forecasting.profile.certified")
+                    : t("forecasting.profile.notCertified")
+              }
             />
             <ProfileRow
-              label="Crane / heavy"
-              value={fields.crane === undefined ? undefined : fields.crane ? "Yes" : "No"}
+              label={t("forecasting.profile.crane")}
+              value={
+                fields.crane === undefined
+                  ? undefined
+                  : fields.crane
+                    ? t("forecasting.profile.yes")
+                    : t("forecasting.profile.no")
+              }
             />
-            <ProfileRow label="Lease preference" value={fields.lease} />
-            <ProfileRow label="Min booking" value={fields.minBooking ? `${fields.minBooking} pallets` : undefined} />
-            <ProfileRow label="Asking rate" value={fields.rate ? `${fields.rate} / pallet / month` : undefined} />
+            <ProfileRow label={t("forecasting.profile.lease")} value={fields.lease} />
+            <ProfileRow
+              label={t("forecasting.profile.minBooking")}
+              value={
+                fields.minBooking
+                  ? t("forecasting.profile.pallets", { n: fields.minBooking })
+                  : undefined
+              }
+            />
+            <ProfileRow
+              label={t("forecasting.profile.askingRate")}
+              value={
+                fields.rate
+                  ? t("forecasting.profile.ratePerPallet", { rate: fields.rate })
+                  : undefined
+              }
+            />
           </div>
         </div>
       </div>
@@ -601,72 +630,68 @@ export default function ForecastingClient() {
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-white border border-border rounded-[16px] p-5">
           <h3 className="text-[14px] font-bold text-heading mb-1">
-            Price position vs. market
+            {t("forecasting.price.title")}
           </h3>
-          <p className="text-[12px] text-muted mb-4">
-            Your asking rate benchmarked against Oman &amp; GCC averages.
-          </p>
+          <p className="text-[12px] text-muted mb-4">{t("forecasting.price.subtitle")}</p>
           <BarChart
             rows={[
-              { label: "Your WH", value: fields.rate ?? 0, color: "#194f82" },
-              { label: "Oman avg", value: 2.1, color: "#8aa6c1" },
-              { label: "GCC avg", value: 3.4, color: "#c2d4e3" },
+              { label: t("forecasting.benchmark.yourWH"), value: fields.rate ?? 0, color: "#194f82" },
+              { label: t("forecasting.benchmark.omanAvg"), value: 2.1, color: "#8aa6c1" },
+              { label: t("forecasting.benchmark.gccAvg"), value: 3.4, color: "#c2d4e3" },
             ]}
-            suffix=" / pallet / mo"
+            suffix={t("forecasting.price.suffix")}
             decimals={2}
           />
           <div className="mt-4 text-[12px] text-muted">
             {fields.rate
               ? fields.rate < 1.8
-                ? "You're under-priced vs. market — platform will auto-suggest uplift."
+                ? t("forecasting.price.underPriced")
                 : fields.rate > 2.5
-                  ? "Above market — consider dynamic pricing to stay competitive."
-                  : "Competitively priced within ±15% of the Oman benchmark."
-              : "Upload a rate to see position."}
+                  ? t("forecasting.price.overPriced")
+                  : t("forecasting.price.competitive")
+              : t("forecasting.price.uploadHint")}
           </div>
         </div>
 
         <div className="bg-white border border-border rounded-[16px] p-5">
           <h3 className="text-[14px] font-bold text-heading mb-1">
-            Seasonal demand forecast
+            {t("forecasting.season.title")}
           </h3>
-          <p className="text-[12px] text-muted mb-4">
-            Expected booking uplift by month for your storage profile.
-          </p>
-          <SeasonChart data={seasonalForecast(fields)} />
+          <p className="text-[12px] text-muted mb-4">{t("forecasting.season.subtitle")}</p>
+          <SeasonChart data={seasonalForecast(fields)} t={t} />
         </div>
       </div>
 
       {/* Certifications & compliance status */}
       <div className="bg-white border border-border rounded-[16px] p-5">
         <h3 className="text-[14px] font-bold text-heading mb-3">
-          Certifications &amp; compliance
+          {t("forecasting.cert.title")}
         </h3>
         <div className="grid grid-cols-4 gap-3">
           {[
             {
-              label: "GDP / GMP",
+              label: t("forecasting.cert.gdp"),
               ok: fields.gdp === true,
               known: fields.gdp !== undefined,
-              hint: "Unlocks pharma demand (+35% premium)",
+              hint: t("forecasting.cert.gdpHint"),
             },
             {
-              label: "HACCP",
+              label: t("forecasting.cert.haccp"),
               ok: fields.haccp === true,
               known: fields.haccp !== undefined,
-              hint: "Required for F&B cold chain",
+              hint: t("forecasting.cert.haccpHint"),
             },
             {
-              label: "CCTV / Security",
+              label: t("forecasting.cert.cctv"),
               ok: !!(fields.security && /cctv|guard/i.test(fields.security)),
               known: !!fields.security,
-              hint: "Required for platform listing",
+              hint: t("forecasting.cert.cctvHint"),
             },
             {
-              label: "Fire suppression",
+              label: t("forecasting.cert.fire"),
               ok: !!(fields.fire && /sprinkler/i.test(fields.fire)),
               known: !!fields.fire,
-              hint: "Sprinkler minimum for insurance",
+              hint: t("forecasting.cert.fireHint"),
             },
           ].map((c) => (
             <div
@@ -704,10 +729,10 @@ export default function ForecastingClient() {
       {/* Section 2 extra KPIs */}
       <div className="bg-white border border-border rounded-[16px] p-5">
         <h3 className="text-[14px] font-bold text-heading mb-3">
-          Platform intelligence scores
+          {t("forecasting.scores.title")}
         </h3>
         <div className="grid grid-cols-3 gap-4">
-          {section2Scores(fields).map((s) => (
+          {section2Scores(fields, t).map((s) => (
             <div key={s.label} className="border border-border rounded-[12px] p-4">
               <div className="flex items-center justify-between mb-1">
                 <div className="text-[12px] font-bold text-muted uppercase">
@@ -746,20 +771,18 @@ export default function ForecastingClient() {
       {/* Demand Match Panel */}
       <div className="bg-white border border-border rounded-[16px] p-5">
         <h3 className="text-[14px] font-bold text-heading mb-1">
-          Demand match forecast
+          {t("forecasting.demand.title")}
         </h3>
-        <p className="text-[12px] text-muted mb-4">
-          Probability of match based on your profile vs. current demand pool.
-        </p>
+        <p className="text-[12px] text-muted mb-4">{t("forecasting.demand.subtitle")}</p>
         <div className="overflow-x-auto">
           <table className="w-full text-[13px]">
             <thead>
-              <tr className="text-left text-[11px] font-bold text-muted uppercase border-b border-border">
-                <th className="py-2 pr-3">Category</th>
-                <th className="py-2 pr-3 w-[220px]">Match</th>
-                <th className="py-2 pr-3">Likely renter</th>
-                <th className="py-2 pr-3">Duration</th>
-                <th className="py-2">Revenue (USD / mo)</th>
+              <tr className="text-start text-[11px] font-bold text-muted uppercase border-b border-border">
+                <th className="py-2 pe-3 text-start">{t("forecasting.demand.colCategory")}</th>
+                <th className="py-2 pe-3 w-[220px] text-start">{t("forecasting.demand.colMatch")}</th>
+                <th className="py-2 pe-3 text-start">{t("forecasting.demand.colRenter")}</th>
+                <th className="py-2 pe-3 text-start">{t("forecasting.demand.colDuration")}</th>
+                <th className="py-2 text-start">{t("forecasting.demand.colRevenue")}</th>
               </tr>
             </thead>
             <tbody>
@@ -767,11 +790,11 @@ export default function ForecastingClient() {
                 .slice()
                 .sort((a, b) => b.probability - a.probability)
                 .map((d) => (
-                  <tr key={d.category} className="border-b border-border">
-                    <td className="py-3 pr-3 font-semibold text-heading">
-                      {d.category}
+                  <tr key={d.key} className="border-b border-border">
+                    <td className="py-3 pe-3 font-semibold text-heading">
+                      {t(`forecasting.demand.categories.${d.key}` as TranslationKey)}
                     </td>
-                    <td className="py-3 pr-3">
+                    <td className="py-3 pe-3">
                       <div className="flex items-center gap-2">
                         <div className="flex-1 h-2 bg-feature rounded-full overflow-hidden">
                           <div
@@ -785,13 +808,17 @@ export default function ForecastingClient() {
                             style={{ width: `${d.probability}%` }}
                           />
                         </div>
-                        <span className="text-[12px] font-bold text-heading w-10 text-right">
+                        <span className="text-[12px] font-bold text-heading w-10 text-end">
                           {d.probability}%
                         </span>
                       </div>
                     </td>
-                    <td className="py-3 pr-3 text-muted">{d.renter}</td>
-                    <td className="py-3 pr-3 text-muted">{d.duration}</td>
+                    <td className="py-3 pe-3 text-muted">
+                      {t(`forecasting.demand.renters.${d.key}` as TranslationKey)}
+                    </td>
+                    <td className="py-3 pe-3 text-muted">
+                      {t(`forecasting.demand.durations.${d.key}` as TranslationKey)}
+                    </td>
                     <td className="py-3 text-heading font-semibold">
                       ${d.revenueLow}–${d.revenueHigh}
                     </td>
@@ -861,7 +888,15 @@ function BarChart({
   );
 }
 
-function SeasonChart({ data }: { data: { month: string; uplift: number }[] }) {
+type MonthKey = "jan" | "feb" | "mar" | "apr" | "may" | "jun" | "jul" | "aug" | "sep" | "oct" | "nov" | "dec";
+
+function SeasonChart({
+  data,
+  t,
+}: {
+  data: { month: MonthKey; uplift: number }[];
+  t: (key: TranslationKey, vars?: Record<string, string | number>) => string;
+}) {
   const max = Math.max(5, ...data.map((d) => d.uplift));
   return (
     <div>
@@ -884,7 +919,7 @@ function SeasonChart({ data }: { data: { month: string; uplift: number }[] }) {
                       : "#194f82"
                     : "#EF4444",
                 }}
-                title={`${d.month}: +${d.uplift}%`}
+                title={`${t(`forecasting.season.months.${d.month}` as TranslationKey)}: +${d.uplift}%`}
               />
             </div>
           );
@@ -896,7 +931,7 @@ function SeasonChart({ data }: { data: { month: string; uplift: number }[] }) {
             key={d.month}
             className="flex-1 text-center text-[10px] text-muted font-semibold"
           >
-            {d.month}
+            {t(`forecasting.season.months.${d.month}` as TranslationKey)}
           </div>
         ))}
       </div>
@@ -916,34 +951,36 @@ function SeasonChart({ data }: { data: { month: string; uplift: number }[] }) {
 
 function seasonalForecast(
   f: Fields
-): { month: string; uplift: number }[] {
+): { month: MonthKey; uplift: number }[] {
   const cold = /cold/i.test(f.storageType || "") || /-?\d+\s*[°]?c/i.test(f.tempRange || "");
   const urban = typeof f.cityKm === "number" && f.cityKm <= 15;
-  // Baseline uplift pattern; amplified by profile fit
-  const baseline = [
-    { month: "Jan", uplift: 8 },
-    { month: "Feb", uplift: 18 },
-    { month: "Mar", uplift: 28 }, // Ramadan
-    { month: "Apr", uplift: 12 },
-    { month: "May", uplift: 6 },
-    { month: "Jun", uplift: 10 },
-    { month: "Jul", uplift: 14 }, // back-to-school
-    { month: "Aug", uplift: 9 },
-    { month: "Sep", uplift: 11 },
-    { month: "Oct", uplift: 16 },
-    { month: "Nov", uplift: 20 },
-    { month: "Dec", uplift: 22 },
+  const baseline: { month: MonthKey; uplift: number }[] = [
+    { month: "jan", uplift: 8 },
+    { month: "feb", uplift: 18 },
+    { month: "mar", uplift: 28 },
+    { month: "apr", uplift: 12 },
+    { month: "may", uplift: 6 },
+    { month: "jun", uplift: 10 },
+    { month: "jul", uplift: 14 },
+    { month: "aug", uplift: 9 },
+    { month: "sep", uplift: 11 },
+    { month: "oct", uplift: 16 },
+    { month: "nov", uplift: 20 },
+    { month: "dec", uplift: 22 },
   ];
   return baseline.map((m) => {
     let v = m.uplift;
-    if (cold && (m.month === "Feb" || m.month === "Mar")) v += 10;
-    if (urban && (m.month === "Jul" || m.month === "Nov" || m.month === "Dec"))
+    if (cold && (m.month === "feb" || m.month === "mar")) v += 10;
+    if (urban && (m.month === "jul" || m.month === "nov" || m.month === "dec"))
       v += 6;
     return { month: m.month, uplift: Math.round(v) };
   });
 }
 
-function section2Scores(f: Fields): {
+function section2Scores(
+  f: Fields,
+  t: (key: TranslationKey, vars?: Record<string, string | number>) => string,
+): {
   label: string;
   score: number;
   hint: string;
@@ -978,39 +1015,51 @@ function section2Scores(f: Fields): {
     : 40;
   return [
     {
-      label: "Demand match",
+      label: t("forecasting.scores.demandMatch"),
       score: demandMatch,
-      hint: ">70 = high booking probability",
+      hint: t("forecasting.scores.demandMatchHint"),
     },
     {
-      label: "Cold premium captured",
+      label: t("forecasting.scores.coldPremium"),
       score: premiumScore,
-      hint: "+35–45% vs. dry storage expected",
+      hint: t("forecasting.scores.coldPremiumHint"),
     },
     {
-      label: "Port proximity",
+      label: t("forecasting.scores.portProx"),
       score: portSc,
-      hint: "Drives search ranking",
+      hint: t("forecasting.scores.portProxHint"),
     },
     {
-      label: "Price utilization",
+      label: t("forecasting.scores.priceUtil"),
       score: priceUtilization,
-      hint: "Within ±15% of market",
+      hint: t("forecasting.scores.priceUtilHint"),
     },
     {
-      label: "Network density",
+      label: t("forecasting.scores.networkDensity"),
       score: networkDensity,
-      hint: "Lower = first-mover advantage",
+      hint: t("forecasting.scores.networkDensityHint"),
     },
     {
-      label: "Platform readiness",
+      label: t("forecasting.scores.platformReadiness"),
       score: readinessScore(f),
-      hint: ">80 unlocks top placement",
+      hint: t("forecasting.scores.platformReadinessHint"),
     },
   ];
 }
 
-function Donut({ occupied, vacant }: { occupied: number; vacant: number }) {
+function Donut({
+  occupied,
+  vacant,
+  occupiedLabel,
+  vacantLabel,
+  inSvgLabel,
+}: {
+  occupied: number;
+  vacant: number;
+  occupiedLabel: string;
+  vacantLabel: string;
+  inSvgLabel: string;
+}) {
   const total = Math.max(1, occupied + vacant);
   const occPct = (occupied / total) * 100;
   const r = 54;
@@ -1055,18 +1104,18 @@ function Donut({ occupied, vacant }: { occupied: number; vacant: number }) {
           textAnchor="middle"
           style={{ fontSize: "10px", fill: "#6b7a8a" }}
         >
-          occupied
+          {inSvgLabel}
         </text>
       </svg>
       <div className="text-[12px] space-y-2">
         <div className="flex items-center gap-2">
           <span className="inline-block w-3 h-3 rounded-sm bg-bk-blue" />
-          <span className="text-heading font-semibold">Occupied</span>
+          <span className="text-heading font-semibold">{occupiedLabel}</span>
           <span className="text-muted">{occupied}%</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="inline-block w-3 h-3 rounded-sm bg-feature border border-border" />
-          <span className="text-heading font-semibold">Vacant</span>
+          <span className="text-heading font-semibold">{vacantLabel}</span>
           <span className="text-muted">{vacant}%</span>
         </div>
       </div>

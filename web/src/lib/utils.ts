@@ -5,6 +5,15 @@ export function ratingLabel(rating: number): string {
   return "Pleasant";
 }
 
+export type RatingLabelKey = "excellent" | "veryGood" | "good" | "pleasant";
+
+export function ratingLabelKey(rating: number): RatingLabelKey {
+  if (rating >= 9) return "excellent";
+  if (rating >= 8) return "veryGood";
+  if (rating >= 7) return "good";
+  return "pleasant";
+}
+
 export function starCount(rating: number): number {
   return Math.min(5, Math.ceil(rating / 2));
 }
@@ -27,7 +36,7 @@ export function calcBookingPrice(
   return { months, total };
 }
 
-export function formatCurrency(amount: number, currency = "EUR"): string {
+export function formatCurrency(amount: number, currency = "OMR"): string {
   return new Intl.NumberFormat("en", {
     style: "currency",
     currency,

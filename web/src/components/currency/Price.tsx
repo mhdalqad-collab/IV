@@ -13,8 +13,8 @@ export default function Price({
   className?: string;
 }) {
   const { currency, mounted } = useCurrency();
-  // Render EUR on server + first client render to avoid hydration mismatch,
-  // then swap to user's choice after mount.
-  const display = formatPrice(amount, mounted ? currency : "EUR", decimals);
+  // Render OMR (the stored base) on server + first client render to avoid a
+  // hydration mismatch, then swap to the user's choice after mount.
+  const display = formatPrice(amount, mounted ? currency : "OMR", decimals);
   return <span className={className}>{display}</span>;
 }

@@ -2,7 +2,9 @@ import { pool } from "@/lib/db";
 import { VALID_TYPES, SORT_MAP } from "@/lib/constants";
 import ListingCard from "@/components/listings/ListingCard";
 import FilterSidebar from "@/components/search/FilterSidebar";
+import HeroSearch from "@/components/home/HeroSearch";
 import Pagination from "@/components/listings/Pagination";
+import { getServerT } from "@/lib/i18n/server";
 import type { Listing } from "@/types";
 
 export const dynamic = "force-dynamic";
@@ -13,6 +15,8 @@ export default async function SearchPage({
   searchParams: Promise<Record<string, string | undefined>>;
 }) {
   const sp = await searchParams;
+  const { t, locale } = await getServerT();
+  const numberLocale = locale === "ar" ? "ar-OM" : "en-US";
   const city = sp.city;
   const type = sp.type;
   const max_price = sp.max_price;
@@ -53,12 +57,19 @@ export default async function SearchPage({
     [...params, lim, offset]
   );
 
+  const formattedTotal = total.toLocaleString(numberLocale);
+
   return (
     <div className="max-w-[1280px] mx-auto px-6 py-8">
-      <div className="grid grid-cols-[280px_1fr] gap-8">
+      <div className="mb-6">
+        <HeroSearch />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-6 md:gap-8">
         {/* Sidebar */}
-        <aside className="bg-white rounded-[16px] p-5 shadow-sm h-fit sticky top-4">
-          <h3 className="text-[16px] font-bold text-heading mb-4">Filter by</h3>
+        <aside className="bg-white rounded-[16px] p-5 shadow-sm h-fit md:sticky md:top-4">
+          <h3 className="text-[16px] font-bold text-heading mb-4">
+            {t("searchPage.filterBy")}
+          </h3>
           <FilterSidebar />
         </aside>
 
@@ -66,16 +77,18 @@ export default async function SearchPage({
         <div>
           <div className="mb-4">
             <h1 className="text-[22px] font-bold text-heading">
-              {city ? `Storage in ${city}` : "All storage spaces"}
+              {city ? t("searchPage.storageIn", { city }) : t("searchPage.allSpaces")}
             </h1>
             <p className="text-muted text-[14px]">
-              {total} space{total !== 1 ? "s" : ""} found
+              {total === 1
+                ? t("searchPage.countSingular", { count: formattedTotal })
+                : t("searchPage.countPlural", { count: formattedTotal })}
             </p>
           </div>
 
           {listings.length === 0 ? (
             <div className="text-center py-16 text-muted">
-              No listings match your filters. Try broadening your search.
+              {t("searchPage.empty")}
             </div>
           ) : (
             <div className="flex flex-col gap-4">

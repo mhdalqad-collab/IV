@@ -24,6 +24,7 @@ export interface Listing {
   currency: string;
   amenities: string[];
   images: string[];
+  videos: string[];
   rating: number;
   review_count: number;
   is_active: boolean;

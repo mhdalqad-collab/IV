@@ -4,9 +4,11 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import ReservationsTable from "@/components/dashboard/ReservationsTable";
 import CreateListingForm from "@/components/dashboard/CreateListingForm";
-import { TYPE_LABELS } from "@/lib/constants";
-import type { Listing, Booking, DashboardStats } from "@/types";
+import ListingActions from "@/components/dashboard/ListingActions";
+import { getServerT } from "@/lib/i18n/server";
 import Price from "@/components/currency/Price";
+import type { TranslationKey } from "@/lib/i18n";
+import type { Listing, Booking, DashboardStats } from "@/types";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +16,7 @@ export default async function DashboardPage() {
   const session = await auth();
   if (!session?.user?.id) redirect("/login");
   const userId = session.user.id;
+  const { t } = await getServerT();
 
   // Stats
   const listingsQ = await pool.query(
@@ -45,12 +48,13 @@ export default async function DashboardPage() {
   };
 
   // Listings
-  const { rows: listings } = await pool.query<Listing>(
+  const { rows: rawListings } = await pool.query<Listing>(
     `SELECT l.*,
             (SELECT count(*) FROM bookings b WHERE b.listing_id = l.id AND b.status != 'cancelled') as booking_count
      FROM listings l WHERE l.user_id = $1 ORDER BY l.created_at DESC`,
     [userId]
   );
+  const listings = JSON.parse(JSON.stringify(rawListings)) as Listing[];
 
   // Reservations
   const { rows: rawReservations } = await pool.query<Booking>(
@@ -59,19 +63,17 @@ export default async function DashboardPage() {
      WHERE l.user_id = $1 ORDER BY b.created_at DESC`,
     [userId]
   );
-
-  // Serialize Date objects to strings for client component
   const reservations = JSON.parse(JSON.stringify(rawReservations)) as Booking[];
 
   return (
     <div className="space-y-8">
       {/* KPIs */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { label: "Active listings", value: stats.listings.active as number | string, isPrice: false },
-          { label: "Total bookings", value: stats.bookings.total as number | string, isPrice: false },
-          { label: "Pending", value: stats.bookings.pending as number | string, isPrice: false },
-          { label: "Revenue", value: stats.revenue, isPrice: true },
+          { label: t("dashboard.kpi.activeListings"), value: stats.listings.active as number | string, isPrice: false },
+          { label: t("dashboard.kpi.totalBookings"), value: stats.bookings.total as number | string, isPrice: false },
+          { label: t("dashboard.kpi.pending"), value: stats.bookings.pending as number | string, isPrice: false },
+          { label: t("dashboard.kpi.revenue"), value: stats.revenue, isPrice: true },
         ].map((kpi) => (
           <div key={kpi.label} className="bg-white rounded-[16px] p-5 border border-border">
             <div className="text-[12px] font-semibold text-muted mb-1">{kpi.label}</div>
@@ -89,20 +91,21 @@ export default async function DashboardPage() {
       {/* My Listings */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-[18px] font-bold text-heading">My Listings</h2>
+          <h2 className="text-[18px] font-bold text-heading">{t("dashboard.myListings")}</h2>
           <CreateListingForm />
         </div>
-        <div className="bg-white rounded-[16px] border border-border overflow-hidden">
-          <table className="w-full text-[13px]">
+        <div className="bg-white rounded-[16px] border border-border overflow-x-auto">
+          <table className="w-full text-[13px] min-w-[720px]">
             <thead>
-              <tr className="text-left text-[11px] font-bold text-muted uppercase border-b border-border">
-                <th className="p-3">Title</th>
-                <th className="p-3">City</th>
-                <th className="p-3">Type</th>
-                <th className="p-3">Size</th>
-                <th className="p-3">Price/m&sup2;</th>
-                <th className="p-3">Bookings</th>
-                <th className="p-3">Status</th>
+              <tr className="text-start text-[11px] font-bold text-muted uppercase border-b border-border">
+                <th className="p-3 text-start">{t("dashboard.table.title")}</th>
+                <th className="p-3 text-start">{t("dashboard.table.city")}</th>
+                <th className="p-3 text-start">{t("dashboard.table.type")}</th>
+                <th className="p-3 text-start">{t("dashboard.table.size")}</th>
+                <th className="p-3 text-start">{t("dashboard.table.pricePerSqm")}</th>
+                <th className="p-3 text-start">{t("dashboard.table.bookings")}</th>
+                <th className="p-3 text-start">{t("dashboard.table.status")}</th>
+                <th className="p-3 text-start">{t("dashboard.table.actions")}</th>
               </tr>
             </thead>
             <tbody>
@@ -114,21 +117,24 @@ export default async function DashboardPage() {
                     </Link>
                   </td>
                   <td className="p-3">{l.city}</td>
-                  <td className="p-3">{TYPE_LABELS[l.type] || l.type}</td>
-                  <td className="p-3">{Number(l.size_sqm)} m&sup2;</td>
+                  <td className="p-3">{t(`listingType.${l.type}` as TranslationKey) || l.type}</td>
+                  <td className="p-3">{Number(l.size_sqm)} {t("common.sqm")}</td>
                   <td className="p-3"><Price amount={Number(l.price_sqm)} decimals={2} /></td>
                   <td className="p-3">{l.booking_count || 0}</td>
                   <td className="p-3">
                     <span className={`text-[11px] font-bold ${l.is_active ? "text-bk-green" : "text-bk-red"}`}>
-                      {l.is_active ? "Active" : "Inactive"}
+                      {l.is_active ? t("common.active") : t("common.inactive")}
                     </span>
+                  </td>
+                  <td className="p-3">
+                    <ListingActions listing={l} />
                   </td>
                 </tr>
               ))}
               {listings.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="p-8 text-center text-muted">
-                    No listings yet. Create your first listing above.
+                  <td colSpan={8} className="p-8 text-center text-muted">
+                    {t("dashboard.noListings")}
                   </td>
                 </tr>
               )}
@@ -139,12 +145,12 @@ export default async function DashboardPage() {
 
       {/* Reservations */}
       <div>
-        <h2 className="text-[18px] font-bold text-heading mb-4">Reservations</h2>
+        <h2 className="text-[18px] font-bold text-heading mb-4">{t("dashboard.reservations")}</h2>
         <div className="bg-white rounded-[16px] border border-border p-4">
           {reservations.length > 0 ? (
             <ReservationsTable reservations={reservations} />
           ) : (
-            <p className="text-center text-muted py-8">No reservations yet.</p>
+            <p className="text-center text-muted py-8">{t("dashboard.noReservations")}</p>
           )}
         </div>
       </div>
